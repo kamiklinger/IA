@@ -14,8 +14,8 @@ export class Agente {
     #counter = 0
     #cooldown = 0
     #cooldownRanged = 0
-    #auxiliar = false;
-    //#adversario
+    #auxiliar = false
+    #adversario
     constructor(cor, tx, ty, px, py, vel, vida, dMelee, dRanged) {
         this.#cor = cor
         this.#tamanho = { x: tx, y: ty }
@@ -28,6 +28,9 @@ export class Agente {
             ["idle", this.idle],
             ["walk", this.walk],
             ["patrol", this.patrol],
+            ["darDanoMelee", this.darDanoMelee],
+            ["darDanoRanged", this.darDanoRanged],
+
         ])
     }
 
@@ -41,7 +44,7 @@ export class Agente {
             throw new Error(`Estado ${stateName}, não encontrado.`)
         }
         this.#currentState = state
-        console.log(this.#currentState+ " estato atual")
+        console.log(this.#currentState + " estato atual")
     }
 
     //------------------------------------------------
@@ -64,13 +67,25 @@ export class Agente {
         return this.#posicao
     }
 
+    set adversario(adversario) {
+        this.#adversario = adversario;
+    }
     //-----------------------------------------------
+
+    verificaColisao() {
+        return (
+            this.posicao.x < this.adversario.posicao.x + this.adversario.tamanho.x &&
+            this.posicao.x + this.tamanho.x > this.adversario.posicao.x &&
+            this.posicao.y < this.adversario.posicao.y + this.adversario.tamanho.y &&
+            this.posicao.y + this.tamanho.y > this.adversario.posicao.y)
+    }
 
     drawAgente(ctx) {
         ctx.fillStyle = this.#cor
         ctx.fillRect(this.#posicao.x, this.#posicao.y, this.#tamanho.x, this.#tamanho.y)
         this.changeColor()
         this.#currentState()
+        // console.log(this.#adversario)
     }
 
     changeColor() {
@@ -99,13 +114,13 @@ export class Agente {
         this.changeState("patrol")
     }
 
-    checaVida(adversario) {
-        if (this.#vida <= 0) {
-            //achar um lugar melhor pra por o continua, pois assim os dois continuam e n só (colocar nos darDanos da vida)
-            // atacante.continua()
-            return this.#vida
-        }
-    }
+    // checaVida() {
+    //     if (this.#vida <= 0) {
+    //         //achar um lugar melhor pra por o continua, pois assim os dois continuam e n só (colocar nos darDanos da vida)
+    //         // atacante.continua()
+    //         return this.#vida
+    //     }
+    // }
 
     tomarDano(dano, atacante) {
         this.#vida -= dano
@@ -113,34 +128,36 @@ export class Agente {
 
     }
 
-    darDanoMelee(adversario) {
-        this.#velocidade = 0
+
+
+    //--------------------------------------------------------
+    //-----------------estados--------------------------------
+
+    darDanoMelee() {
+        // this.#velocidade = 0
         if (this.#cooldown >= 10) {
-            adversario.tomarDano(this.#danoMelee, this)
-            console.log("to dando dano aqui no cara")
+            this.adversario.tomarDano(this.#danoMelee, this)
+
             this.#cooldown = 0
 
         }
-        if (adversario.checaVida() == 0) {
-            this.continua()
-        }
+        // if (this.adversario.checaVida() == 0) {
+        //     this.continua()
+        // }
         this.#cooldown ++
     }
 
-    darDanoRanged(adversario) {
+    darDanoRanged() {
         if (this.#cooldownRanged >= 2) {
-            if (Math.distance(this.#posicao.x, adversario.#posicao.y,
-                this.#posicao.y, adversario.#posicao.y))
-                adversario.tomarDano(this.#danoRanged, this)
+            if (Math.distance(this.#posicao.x, this.adversario.#posicao.y,
+                this.#posicao.y, this.adversario.#posicao.y))
+                this.adversario.tomarDano(this.#danoRanged, this)
 
-            console.log("to dando dano longe aqui no cara")
+            // console.log("to dando dano longe aqui no cara")
             this.#cooldownRanged = 0
         }
         this.#cooldownRanged ++
     }
-
-    //--------------------------------------------------------
-    //-----------------estados--------------------------------
 
     idle() {
         this.#velocidade = 0
@@ -152,29 +169,32 @@ export class Agente {
         }
         this.#posicao.x += this.#velocidade
     }
-    
+
     patrol() {
         if (this.#velocidade == 0) {
             this.#velocidadePontencial = 1
             this.#velocidade = this.#velocidadePontencial
         }
         this.#posicao.x += this.#velocidade
-        
-        if ((this.#posicao.x >= 100 || this.#posicao.x <= 0) && !this.#auxiliar)  {
-            console.log("Quantas vezes entrou aqui no patrol:")
-            this.#velocidadePontencial *= -1
+        if (this.#posicao.x >= 100 || this.#posicao.x <= 0) {
+            this.#velocidadePontencial *= -1;
             this.#velocidade = this.#velocidadePontencial
-            this.#counter++
-            this.#auxiliar = true;
+            // this.#counter++
+            // console.log(this.#counter)
         }
+        // if (this.#counter  <=2) {
+        //     this.changeState("idle")
+        // }
+        // if ((this.#posicao.x >= 100 || this.#posicao.x <= 0) && !this.#auxiliar) {
+        //     console.log("Quantas vezes entrou aqui no patrol:")
+        //     this.#velocidadePontencial *= -1
+        //     this.#velocidade = this.#velocidadePontencial
+        //     this.#auxiliar = true;
+        // }
 
-        if (this.#counter == 10) {
-            this.changeState("idle")
-        }
+        
     }
 
-    // pegaAdversario(adversario){
-    //     this.#adversario = adversario;
-    // }
-    //--------------------------------------------------------
+
+    // --------------------------------------------------------
 }

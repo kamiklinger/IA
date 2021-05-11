@@ -6,17 +6,14 @@ export class Amigo extends Agente {
         // this.changeState("darDano")
     }
 
-    verificaColisao(adversario) {
-            if (this.posicao.x < adversario.posicao.x + adversario.tamanho.x &&
-                this.posicao.x + this.tamanho.x > adversario.posicao.x &&
-                this.posicao.y < adversario.posicao.y + adversario.tamanho.y &&
-                this.posicao.y + this.tamanho.y > adversario.posicao.y) {
-               console.log(adversario)
+    mudarEstados(){
 
-                this.darDanoMelee(adversario) 
-        
-                // this.changeState("darDanoMelee")
+        if(!this.verificaColisao){
+            throw new Error(`Não colidiu com nada`)
         }
-    }
 
+        this.changeState("idle")
+        // this.changeState("darDanoMelee")
+
+    }
 }
