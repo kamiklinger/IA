@@ -11,16 +11,21 @@ export class WayPoint {
         this.#cor = "Pink"
 
     }
+    get posicaoWayPoint() {
+        return this.#posicao
+    }
+
     desenhaPontos(ctx) {
         ctx.fillStyle = this.#cor
         ctx.fillRect(this.#posicao.x, this.#posicao.y, this.#tamanho.x, this.#tamanho.y)
-        ctx.fillText("ID: "+this.#id,this.#posicao.x, this.#posicao.y-5 )
+        ctx.fillText("ID: " + this.#id, this.#posicao.x, this.#posicao.y - 5)
     }
-    verificaColisao() {
+    verificaColisaoWayPoint(patrulhador) {
+
         return (
-            this.posicao.x < this.adversario.posicao.x + this.adversario.tamanho.x &&
-            this.posicao.x + this.tamanho.x > this.adversario.posicao.x &&
-            this.posicao.y < this.adversario.posicao.y + this.adversario.tamanho.y &&
-            this.posicao.y + this.tamanho.y > this.adversario.posicao.y)
+            this.#posicao.x < patrulhador.posicao.x + patrulhador.tamanho.x &&
+            this.#posicao.x + this.#tamanho.x > patrulhador.posicao.x &&
+            this.#posicao.y < patrulhador.posicao.y + patrulhador.tamanho.y &&
+            this.#posicao.y + this.#tamanho.y > patrulhador.posicao.y)
     }
 }

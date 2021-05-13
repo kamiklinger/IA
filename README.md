@@ -14,3 +14,10 @@ Iniciamos a implementar o Waypoint, desenhando na tela as coordenadas
 Para a V3: 
 Fazer a patrulha entre os pontos, e iniciar a implementação do flocking
 ----
+Na V3 implementamos o Waypoints e organizamos o código separado por "sessões" (feitas com comentarios ) pois estava ficando absurdamente grande e impossível de se encontrar
+
+----------
+Para V4 
+Implementar Flocking, talvez arrumar os estados de ataque para que eles funcionem direito
+
+----

@@ -8,7 +8,7 @@ Math.distance = (xa, ya, xb, yb) => {
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
-class GameManager {
+export class GameManager {
     static canvas = document.createElement("canvas")
     static ctx = GameManager.canvas.getContext("2d")
 
@@ -16,7 +16,7 @@ class GameManager {
     static inimigo = new Inimigo();
 
     static initialized = false
-    static wayPoints = new Set()
+    static wayPoints = []
 
     static init() {
         if (GameManager.initialized)
@@ -26,32 +26,53 @@ class GameManager {
         GameManager.canvas.height = 700
         document.body.append(GameManager.canvas)
         GameManager._gameUpdate()
-        GameManager.wayPoints.add(new WayPoint(1, 10, 100, 6, 6, 6))
-        GameManager.wayPoints.add(new WayPoint(2, 600, 100, 6, 6, 0))
-        GameManager.wayPoints.add(new WayPoint(3, 600, 500, 6, 6, 6))
-        GameManager.wayPoints.add(new WayPoint(4, 10, 400, 6, 6, 0))
-        GameManager.wayPoints.add(new WayPoint(5, 250, 200, 6, 6, 6))
-        GameManager.wayPoints.add(new WayPoint(6, 350, 200, 6, 6, 0))
-        GameManager.wayPoints.add(new WayPoint(7, 350, 270, 6, 6, 6))
+
+        //array de pontos para waypoint
+        GameManager.wayPoints.push(new WayPoint(1, 10, 100, 6, 6, 6))
+        GameManager.wayPoints.push(new WayPoint(2, 600, 100, 6, 6, 0))
+        GameManager.wayPoints.push(new WayPoint(3, 600, 500, 6, 6, 6))
+        GameManager.wayPoints.push(new WayPoint(4, 10, 400, 6, 6, 0))
+        GameManager.wayPoints.push(new WayPoint(5, 250, 200, 6, 6, 6))
+        GameManager.wayPoints.push(new WayPoint(6, 350, 200, 6, 6, 0))
+        GameManager.wayPoints.push(new WayPoint(7, 350, 270, 6, 6, 6))
+
+        GameManager.inimigo.setWayPoints(GameManager.wayPoints)
 
     }
 
-    static _gameUpdate(time) {
-        const loop = () => {
+    static diffTime = 0
+
+    static _gameUpdate() {
+
+        let prevTime = 0
+        GameManager.diffTime = 0
+        const loop = (time) => {
+            GameManager.diffTime = time - prevTime
+
+            // desenhação das cosas no canvas
             GameManager.ctx.clearRect(0, 0, GameManager.canvas.width, GameManager.canvas.height)
+
             GameManager.amigo.drawAgente(GameManager.ctx)
             GameManager.inimigo.drawAgente(GameManager.ctx)
-            GameManager.amigo.adversario = GameManager.Inimigo
-            GameManager.inimigo.mudarEstados()
-            GameManager.amigo.mudarEstados()
 
             GameManager.wayPoints.forEach(wayPoint => {
                 wayPoint.desenhaPontos(GameManager.ctx)
             })
 
+
+            // define quem são os adversários
+            GameManager.amigo.adversario = GameManager.Inimigo
+            GameManager.wayPoints.adversario = GameManager.Inimigo
+
+            //As ações vão ser chamadas aqui 
+            GameManager.inimigo.mudarEstados()
+            GameManager.amigo.mudarEstados()
+
             // GameManager.amigo.verificaColisao(GameManager.inimigo)
             // GameManager.inimigo.atacar(GameManager.amigo)
 
+
+            prevTime = time
             requestAnimationFrame(loop)
         }
 

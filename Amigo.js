@@ -12,7 +12,7 @@ export class Amigo extends Agente {
             throw new Error(`Não colidiu com nada`)
         }
 
-        this.changeState("idle")
+        // this.changeState("wayPointPatrol")
         // this.changeState("darDanoMelee")
 
     }
